@@ -130,6 +130,8 @@ int initqual(EN_Project *pr)
     {
         fseek(pr->out_files.HydFile, pr->out_files.HydOffset, SEEK_SET);
     }
+    //// buffer_init();  ////
+
 
     // Set elapsed times to zero
     qual->Qtime = 0;
@@ -225,6 +227,7 @@ int runqual(EN_Project *pr, long *t)
             if (!readhydstep(pr, &hydstep)) return 307;
             time->Htime = hydtime;
         }
+        //// set hyd buffer with results for current step ////
 
         // Save current results to output file 
         if (time->Htime >= time->Rtime)
@@ -250,6 +253,7 @@ int runqual(EN_Project *pr, long *t)
                 errcode = sortnodes(pr);
             }
         }
+        //// Advance hydraulic time to new step ////
         if (!hyd->OpenHflag) time->Htime = hydtime + hydstep;
     }
     return errcode;
@@ -497,9 +501,11 @@ double findsourcequal(EN_Project *pr, int n, double volin, double volout, long t
         case CONCEN:
         if (net->Node[n].Type == EN_JUNCTION)
         {
+            //// Read node demand from the hyd buffer ////
             // ... source requires a negative demand at the node
             if (hyd->NodeDemand[n] < 0.0)
             {
+                //// Read node demand from the hyd buffer ////
                 c = -c * hyd->NodeDemand[n] * tstep / volout;
             }
             else c = 0.0;
@@ -677,6 +683,7 @@ int flowdirchanged(EN_Project *pr)
     {
         // Determine sign (+1 or -1) of new flow rate
         olddir = qual->FlowDir[k];
+        //// Read link status and link flow from hyd buffer ////
         q = (hyd->LinkStatus[k] <= CLOSED) ? 0.0 : hyd->LinkFlows[k];
         newdir = SGN(q);
 

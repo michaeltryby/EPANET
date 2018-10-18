@@ -162,7 +162,7 @@ int savehyd(EN_Project *pr, long *htime)
 **   Purpose: saves current hydraulic solution to file HydFile
 **            in binary format
 **--------------------------------------------------------------
-*/
+*/ //// Move to hydbuffer, refactor to use hyd result struct ////
 {
   EN_Network *net = &pr->network;
   out_file_t *out = &pr->out_files;
@@ -225,7 +225,7 @@ int savehydstep(EN_Project *pr, long *hydstep)
 **   Purpose: saves next hydraulic timestep to file HydFile
 **            in binary format
 **--------------------------------------------------------------
-*/
+*/ //// Move to hyd buffer, refactor to use hyd buffer ////
 {
   out_file_t *out = &pr->out_files;
   INT4 t;
@@ -334,7 +334,7 @@ int readhyd(EN_Project *pr, long *hydtime)
 **         (hydtime), nodal demands (D) and heads (H), link
 **         flows (Q), link status (S), and link settings (K).
 **--------------------------------------------------------------
-*/
+*/  //// Move to hyd buffer. Refactor to use hyd result struct ////
 {
   EN_Network *net = &pr->network;
   hydraulics_t *hyd = &pr->hydraulics;
@@ -394,7 +394,7 @@ int readhydstep(EN_Project *pr, long *hydstep)
 **   Returns: 1 if successful, 0 if not
 **   Purpose: reads hydraulic time step from file HydFile
 **--------------------------------------------------------------
-*/
+*/  //// Move to hyd buffer. Refactor to use hyd buffer ////
 {
   INT4 t;
   FILE *hydFile = pr->out_files.HydFile;

@@ -629,6 +629,7 @@ int DLLEXPORT EN_createproject(EN_ProjectHandle *ph)
 
   if (project != NULL){
       project->error_handle = new_errormanager(&errorLookup);
+      project->hyd_buffer = new_hydbuffer();
       *ph = project;
   }
   else
@@ -648,6 +649,7 @@ int DLLEXPORT EN_deleteproject(EN_ProjectHandle *ph)
     else
     {
         dst_errormanager(p->error_handle);
+        dst_hydbuffer(p->hyd_buffer);
         free(p);
 
         *ph = NULL;
@@ -1236,6 +1238,7 @@ int DLLEXPORT EN_openQ(EN_ProjectHandle ph) {
   p->save_options.SaveQflag = FALSE;
   if (!p->Openflag)
     return set_error(p->error_handle, 102);
+
   // !LT! todo - check for p->save_options.SaveHflag / set sequential/step mode
   // if (!p->save_options.SaveHflag) return(104);
 
@@ -1255,14 +1258,17 @@ int DLLEXPORT EN_initQ(EN_ProjectHandle ph, int saveflag) {
 
   if (!p->quality.OpenQflag)
     return set_error(p->error_handle, 105);
+
   initqual(p);
   p->save_options.SaveQflag = FALSE;
   p->save_options.Saveflag = FALSE;
+
   if (saveflag) {
     errcode = openoutfile(p);
     if (!errcode)
       p->save_options.Saveflag = TRUE;
   }
+
   return set_error(p->error_handle, errcode);
 }
 

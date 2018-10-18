@@ -14,6 +14,7 @@ QUALROUTE.C -- water quality routing module for the EPANET program
 // Macro to compute the volume of a link
 #define LINKVOL(k) (0.785398 * net->Link[(k)].Len * SQR(net->Link[(k)].Diam))
 // Macro to get link flow compatible with flow saved to hydraulics file
+//// Read link status and link flow from hyd buffer ////
 #define LINKFLOW(k) ((hyd->LinkStatus[k] <= CLOSED) ? 0.0 : hyd->LinkFlows[k])
 
 // Exported Functions
@@ -96,6 +97,7 @@ void transport(EN_Project *pr, long tstep)
         // ... if node is a junction, add on any external outflow (e.g., demands)
         if (net->Node[n].Type == EN_JUNCTION)
         {
+            //// Read node demand from hyd buffer ////
             volout += MAX(0.0, hyd->NodeDemand[n]);
         }
 
@@ -139,7 +141,7 @@ void  evalnodeinflow(EN_Project *pr, int k, long tstep, double *volin,
     double q, v, vseg;
     Pseg seg;
 
-    EN_Network *net = &pr->network;
+//    EN_Network *net = &pr->network;
     hydraulics_t *hyd = &pr->hydraulics;
     quality_t *qual = &pr->quality;
 
@@ -207,6 +209,7 @@ double  findnodequal(EN_Project *pr, int n, double volin,
     if (net->Node[n].Type == EN_JUNCTION)
     {
         // ... dilute inflow with any external negative demand
+        //// Read node demand from hyd buffer ////
         volin -= MIN(0.0, hyd->NodeDemand[n]) * tstep;
 
         // ... new concen. is mass inflow / volume inflow
@@ -278,7 +281,7 @@ double  noflowqual(EN_Project *pr, int n)
     FlowDirection dir;
 
     EN_Network   *net = &pr->network;
-    hydraulics_t *hyd = &pr->hydraulics;
+//    hydraulics_t *hyd = &pr->hydraulics;
     quality_t    *qual = &pr->quality;
 
     // Examine each link incident on the node
@@ -383,6 +386,7 @@ void updatemassbalance(EN_Project *pr, int n, double massin,
     {
         // Junctions lose mass from outflow demand & gain it from source inflow
     case EN_JUNCTION:
+        //// Read node demand from hyd buffer ////
         masslost = MAX(0.0, hyd->NodeDemand[n]) * tstep * qual->NodeQual[n];
         massadded = qual->SourceQual * volout;
         break;
@@ -495,7 +499,7 @@ int sortnodes(EN_Project *pr)
     FlowDirection dir;
 
     EN_Network   *net = &pr->network;
-    hydraulics_t *hyd = &pr->hydraulics;
+//    hydraulics_t *hyd = &pr->hydraulics;
     quality_t    *qual = &pr->quality;
 
     // Allocate an array to count # links with inflow to each node
@@ -656,7 +660,7 @@ void initsegs(EN_Project *pr)
     double c, v, v1;
 
     EN_Network   *net = &pr->network;
-    hydraulics_t *hyd = &pr->hydraulics;
+//    hydraulics_t *hyd = &pr->hydraulics;
     quality_t    *qual = &pr->quality;
 
     // Add one segment with assigned downstream node quality to each pipe

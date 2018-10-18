@@ -226,6 +226,7 @@ double piperate(EN_Project *pr, int k)
 
     // Compute Reynolds No.
     // Flow rate made consistent with how its saved to hydraulics file
+    //// Read link status and link flow from hyd buffer ////
     q = (hyd->LinkStatus[k] <= CLOSED) ? 0.0 : hyd->LinkFlows[k];
     a = PI * d * d / 4.0;         // pipe area
     u = fabs(q) / a;              // flow velocity

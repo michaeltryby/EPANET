@@ -23,6 +23,7 @@ AUTHOR:     L. Rossman
 #include "epanet2.h"
 #include "hash.h"
 #include "util/errormanager.h"
+#include "hydbuffer.h"
 #include <stdio.h>
 
 
@@ -903,7 +904,8 @@ typedef struct EN_Project {
   Title[MAXTITLE][MAXMSG+1],  /// Problem title
   MapFname[MAXFNAME+1];       /// Map file name
   
-  error_handle_t* error_handle; //Simple error manager
+  error_handle_t *error_handle; //Simple error manager
+  buffer_t *hyd_buffer;         // Buffer for running hyd and quality concurrently
 
   void (* viewprog) (char *);     /* Pointer to progress viewing function */   
   
