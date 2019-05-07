@@ -2,10 +2,11 @@ EPANET {#epanet-readme}
 ======
 
 ## Build Status
-[![Build status](https://ci.appveyor.com/api/projects/status/19wpg4g2cmj3oihl?svg=true)](https://ci.appveyor.com/project/OpenWaterAnalytics/epanet/branch/dev)
-[![Build Status](https://travis-ci.org/OpenWaterAnalytics/EPANET.svg?branch=dev)](https://travis-ci.org/OpenWaterAnalytics/EPANET)
+[![Build status](https://ci.appveyor.com/api/projects/status/i3oj446rm6fnq6ki?svg=true)](https://ci.appveyor.com/project/michaeltryby/epanet/branch/dev)
+[![Build Status](https://travis-ci.org/michaeltryby/EPANET.svg?branch=dev)](https://travis-ci.org/michaeltryby/EPANET)
 
-[![codecov](https://codecov.io/gh/OpenWaterAnalytics/EPANET/branch/dev/graph/badge.svg)](https://codecov.io/gh/OpenWaterAnalytics/EPANET)
+
+[![codecov](https://codecov.io/gh/michaeltryby/EPANET/branch/dev/graph/badge.svg)](https://codecov.io/gh/michaeltryby/EPANET)
 
 
 ## For EPANET-related questions and discussion
