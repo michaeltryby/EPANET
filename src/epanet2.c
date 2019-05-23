@@ -7,16 +7,11 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 03/17/2019
+ Last Updated: 05/15/2019
  ******************************************************************************
 */
-#ifdef _DEBUG
-  #define _CRTDBG_MAP_ALLOC
-  #include <stdlib.h>
-  #include <crtdbg.h>
-#else
-  #include <stdlib.h>
-#endif
+
+#include <stdlib.h>
 #include <string.h>
 
 #include "types.h"
@@ -383,6 +378,22 @@ int DLLEXPORT ENsetdemandmodel(int model, EN_API_FLOAT_TYPE pmin,
               EN_API_FLOAT_TYPE preq, EN_API_FLOAT_TYPE pexp)
 {
     return EN_setdemandmodel(_defaultProject, model, pmin, preq, pexp);
+}
+
+int DLLEXPORT ENadddemand(int nodeIndex, EN_API_FLOAT_TYPE baseDemand,
+    char *demandPattern, char *demandName)
+{
+    return EN_adddemand(_defaultProject, nodeIndex, baseDemand, demandPattern, demandName);
+}
+
+int DLLEXPORT ENdeletedemand(int nodeIndex, int demandIndex)
+{
+    return EN_deletedemand(_defaultProject, nodeIndex, demandIndex);
+}
+
+int DLLEXPORT ENgetdemandindex(int nodeIndex, char *demandName, int *demandIndex)
+{
+    return EN_getdemandindex(_defaultProject, nodeIndex, demandName, demandIndex);
 }
 
 int DLLEXPORT ENgetnumdemands(int nodeIndex, int *numDemands)

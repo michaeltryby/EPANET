@@ -7,23 +7,15 @@ Description:  parses network data from a line of an EPANET input file
 Authors:      see AUTHORS
 Copyright:    see AUTHORS
 License:      see LICENSE
-Last Updated: 04/03/2019
+Last Updated: 05/15/2019
 ******************************************************************************
 */
 
-#ifdef _DEBUG
-  #define _CRTDBG_MAP_ALLOC
-  #include <stdlib.h>
-  #include <crtdbg.h>
-#else
-  #include <stdlib.h>
-#endif
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #include <math.h>
 
-#include "demand.h"
 #include "types.h"
 #include "funcs.h"
 #include "hash.h"
@@ -86,10 +78,6 @@ int juncdata(Project *pr)
     int njuncs;                 // number of network junction nodes
     double el,                  // elevation
            y = 0.0;             // base demand
-    
-	list_t *demand_list = NULL; // demand list
-
-
     Snode *node;
 
     // Add new junction to data base
@@ -122,13 +110,9 @@ int juncdata(Project *pr)
     node->Type = JUNCTION;
     node->Comment = xstrcpy(&node->Comment, parser->Comment, MAXMSG);
 
-	// create demand data only if a demand has been specified
-	if (y != 0.0) {
-		demand_list = create_demand_list(y, p, NULL);
-		if (!demand_list) return 101;
-	}
-    node->D = demand_list;
-
+    // Create a demand for the junction and use NodeDemand as an indicator
+    // to be used when processing demands from the [DEMANDS] section
+    if (!adddemand(node, y, p, NULL)) return 101;
     hyd->NodeDemand[njuncs] = y;
     return 0;
 }
@@ -713,11 +697,7 @@ int demanddata(Project *pr)
     int j, n, p = 0;
     double y;
 
-	list_t *demand_list = NULL;
-	demand_data_t *demand_data = NULL;
-    
-	//Pdemand demand;
-    //Pdemand cur_demand;
+    Pdemand demand;
 
     // Extract data from tokens
     n = parser->Ntokens;
@@ -741,27 +721,23 @@ int demanddata(Project *pr)
         if (p == 0) return setError(parser, 2, 205);
     }
 
-   
-	// if no demands were specified in [JUNCTIONS] create the list here 
-	demand_list = net->Node[j].D;
-	if (demand_list == NULL) {
-		demand_list = create_list(get_demand_data_size(), delete_demand_data);
-		if (demand_list == NULL) return 101;
-		net->Node[j].D = demand_list;
-	}
-	
-	// else replace the demand data entered in [JUNCTIONS] section
-	else if (size_list(demand_list) == 1) {
-		list_node_t *lnode = head_list(demand_list, true);
-		delete_node(demand_list, lnode);
-	}
+    // Replace any demand entered in [JUNCTIONS] section
+    demand = net->Node[j].D;
+    if (demand && hyd->NodeDemand[j] != MISSING)
+    {
+        // First category encountered will overwrite demand category
+        // created when junction was read from [JUNCTIONS] section
+        demand->Base = y;
+        demand->Pat = p;
+        if (parser->Comment[0])
+        {
+            demand->Name = xstrcpy(&demand->Name, parser->Comment, MAXID);
+        }
+        hyd->NodeDemand[j] = MISSING; // marker - next iteration will append a new category.
+    }
 
-	// append the data to the list
-	demand_data = create_demand_data(y, p, parser->Comment);
-	if (demand_data == NULL) return 101;
-
-	append_list(demand_list, &demand_data);
-
+    // Otherwise add new demand to junction
+    else if (!adddemand(&net->Node[j], y, p, parser->Comment) > 0) return 101;
     return 0;
 }
 
@@ -884,7 +860,7 @@ int sourcedata(Project *pr)
 **  Purpose: processes water quality source data
 **  Formats:
 **     [SOURCE]
-**        node  sourcetype  quality  (pattern start stop)
+**        node  sourcetype  quality  (pattern)
 **
 **  NOTE: units of mass-based source are mass/min
 **--------------------------------------------------------------
@@ -952,7 +928,7 @@ int emitterdata(Project *pr)
 **  Purpose: processes junction emitter data
 **  Format:
 **     [EMITTER]
-**        node   K
+**        node   Ke
 **--------------------------------------------------------------
 */
 {
@@ -1692,7 +1668,7 @@ int optionchoice(Project *pr, int n)
 **    VERIFY              filename
 **    UNBALANCED          STOP/CONTINUE {Niter}
 **    PATTERN             id
-**    DEMAND MODEL        DDA/PDA/PPA
+**    DEMAND MODEL        DDA/PDA
 **--------------------------------------------------------------
 */
 {
@@ -1851,8 +1827,8 @@ int optionvalue(Project *pr, int n)
 **    TRIALS              value
 **    ACCURACY            value
 
-**    HEADLIMIT           value
-**    FLOWLIMIT           value
+**    HEADERROR           value
+**    FLOWCHANGE          value
 **    MINIMUM PRESSURE    value
 **    REQUIRED PRESSURE   value
 **    PRESSURE EXPONENT   value

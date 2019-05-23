@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 04/18/2019
+ Last Updated: 05/15/2019
  ******************************************************************************
 */
 #ifndef FUNCS_H
@@ -36,6 +36,10 @@ int     findvalve(Network *, int);
 int     findpump(Network *, int);
 int     findpattern(Network *, char *);
 int     findcurve(Network *, char *);
+
+Pdemand finddemand(Pdemand, int);
+int     adddemand(Snode *, double, int, char *);
+void    freedemands(Snode *);
 
 void    adjustpatterns(Network *, int);
 void    adjustcurves(Network *, int);

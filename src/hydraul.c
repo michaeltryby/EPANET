@@ -7,28 +7,18 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 11/27/2018
+ Last Updated: 05/15/2019
  ******************************************************************************
 */
 
-#ifdef _DEBUG
-  #define _CRTDBG_MAP_ALLOC
-  #include <stdlib.h>
-  #include <crtdbg.h>
-#else
-  #include <stdlib.h>
-#endif
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #include <math.h>
 
 #include "types.h"
 #include "funcs.h"
 #include "text.h"
-
-#include "demand.h"
-
 
 const double QZERO = 1.e-6;  // Equivalent to zero flow in cfs
 
@@ -556,7 +546,7 @@ void  demands(Project *pr)
     int  i ,j, n;
     long k, p;
     double djunc, sum;
-//    Pdemand demand;
+    Pdemand demand;
 
     // Determine total elapsed number of pattern periods
     p = (time->Htime + time->Pstart) / time->Pstep;
@@ -566,19 +556,15 @@ void  demands(Project *pr)
     for (i = 1; i <= net->Njuncs; i++)
     {
         sum = 0.0;
-		list_t *dlist = net->Node[i].D;
-		
-		if (dlist) {
-			for (list_node_t *lnode = first_list(dlist); done_list(lnode); lnode = next_list(lnode))
-			{
-				// pattern period (k) = (elapsed periods) modulus (periods per pattern)
-				j = get_pattern_index(lnode);
-				k = p % (long)net->Pattern[j].Length;
-				djunc = (get_base_demand(lnode)) * net->Pattern[j].F[k] * hyd->Dmult;
-				if (djunc > 0.0) hyd->Dsystem += djunc;
-				sum += djunc;
-			}
-		}
+        for (demand = net->Node[i].D; demand != NULL; demand = demand->next)
+        {
+            // pattern period (k) = (elapsed periods) modulus (periods per pattern)
+            j = demand->Pat;
+            k = p % (long)net->Pattern[j].Length;
+            djunc = (demand->Base) * net->Pattern[j].F[k] * hyd->Dmult;
+            if (djunc > 0.0) hyd->Dsystem += djunc;
+            sum += djunc;
+        }
         hyd->NodeDemand[i] = sum;
 
         // Initialize pressure dependent demand
