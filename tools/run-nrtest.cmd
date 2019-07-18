@@ -24,6 +24,7 @@
 setlocal EnableDelayedExpansion
 
 set "SCRIPT_HOME=%~dp0"
+cd %TEST_HOME%
 
 :: Check existence
 if not defined REF_BUILD_ID (echo "ERROR: REF_BUILD_ID must be defined" & exit /B 1)
@@ -36,10 +37,9 @@ if [%2]==[] ( set "SUT_BUILD_ID=local"
 
 
 :: check if app config file exists
-if not exist "apps\epanet-%SUT_BUILD_ID%.json" do (
-  set "SUT_PATH=%BUILD_HOME%\bin\Release"
+if not exist apps\epanet-%SUT_BUILD_ID%.json (
   mkdir apps
-  call %SCRIPT_HOME%\app-config.cmd %SUT_PATH% %PLATFORM% %SUT_BUILD_ID% %SUT_VERSION%^
+  call %SCRIPT_HOME%\app-config.cmd %BUILD_HOME%\bin\Release %PLATFORM% %SUT_BUILD_ID% %SUT_VERSION%^
      > apps\epanet-%SUT_BUILD_ID%.json
 )
 
