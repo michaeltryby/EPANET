@@ -85,7 +85,7 @@ curl -fsSL -o benchmark.zip %BENCHFILES_URL%
 mklink /D .\tests .\epanet-nrtests-%LATEST_TAG:~1%\public > nul
 mklink /D .\scripts .\epanet-nrtests-%LATEST_TAG:~1%\scripts > nul
 cd benchmark
-mklink /D .\epanet-ref .\epanet-%REF_BUILD_ID%
+mklink /D .\epanet-ref .\epanet-%REF_BUILD_ID% > nul
 
 :: return to project home
 cd ..\..
