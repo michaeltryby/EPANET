@@ -17,7 +17,7 @@
 ::    PLATFORM
 ::
 ::  Arguments:
-::    1 - REF_BUILD_ID
+::    1 - REF_BUILD_ID - required argument
 ::
 ::  Note:
 ::    Tests and benchmark files are stored in the epanet-nrtests repo.
