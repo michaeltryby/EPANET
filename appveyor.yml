@@ -16,8 +16,8 @@ matrix:
   - GROUP: "EXPERIMENTAL"
 
 environment:
-    BUILD_HOME: "%APPVEYOR_BUILD_FOLDER%/buildprod"
-    TEST_HOME:  "%APPVEYOR_BUILD_FOLDER%/nrtestsuite"
+  BUILD_HOME: "%APPVEYOR_BUILD_FOLDER%/buildprod"
+  TEST_HOME:  "%APPVEYOR_BUILD_FOLDER%/nrtestsuite"
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     GENERATOR: "Visual Studio 15 2017"
