@@ -11,9 +11,10 @@
 ::    python -m pip install -r requirements.txt
 ::
 ::  Environment Variables:
-::    TEST_HOME
 ::    BUILD_HOME
+::    TEST_HOME
 ::    PLATFORM
+::    REF_BUILD_ID
 ::
 ::  Arguments:
 ::    1 - (SUT_VERSION)
@@ -27,9 +28,8 @@ set "SCRIPT_HOME=%~dp0"
 cd %TEST_HOME%
 
 :: Check existence
-if not defined REF_BUILD_ID (echo "ERROR: REF_BUILD_ID must be defined" & exit /B 1)
 
-if [%1]==[] (set SUT_VERSION=
+if [%1]==[] (set "SUT_VERSION=unknown"
 ) else ( set "SUT_VERSION=%~1" )
 
 if [%2]==[] ( set "SUT_BUILD_ID=local"
@@ -65,7 +65,7 @@ set TEST_OUTPUT_PATH=benchmark\epanet-%SUT_BUILD_ID%
 
 :: build nrtest compare command
 set NRTEST_COMPARE_CMD=python %NRTEST_SCRIPT_PATH%\nrtest compare
-set REF_OUTPUT_PATH=benchmark\epanet-ref
+set REF_OUTPUT_PATH=benchmark\epanet-%REF_BUILD_ID%
 set RTOL_VALUE=0.01
 set ATOL_VALUE=0.0
 
