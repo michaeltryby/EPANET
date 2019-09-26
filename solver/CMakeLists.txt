@@ -16,15 +16,18 @@ set(EPANET_PUBLIC_HEADERS
     )
 
 set(EPANET_PRIVATE_HEADERS
+    demand.h
     enumstxt.h
     funcs.h
     hash.h
+    list.h
     mempool.h
     text.h
     types.h
     )
 
 set(EPANET_SOURCES
+    demand.c
     epanet.c
     epanet2.c
     errors.dat
@@ -39,6 +42,7 @@ set(EPANET_SOURCES
     input1.c
     input2.c
     input3.c
+    list.c
     mempool.c
     output.c
     project.c

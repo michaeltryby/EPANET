@@ -17,7 +17,13 @@
 #define LIST_H
 
 
-#include <stdbool.h>
+#if (_MSC_VER <= 1600)
+  #define bool  int
+  #define true  1
+  #define false 0
+#else
+  #include <stdbool.h>
+#endif
 
 
 #if defined(__cplusplus)
@@ -99,17 +105,12 @@ list_node_t *head_list(list_t *list, bool removeFromList);
 list_node_t *tail_list(list_t *list);
 
 /**
-@brief Returns nth node of the list or NULL.
-*/
-list_node_t *get_nth_list(list_t *list, int index);
-
-/**
 @brief Returns the list node with the given key or NULL.
 */
 list_node_t *search_list(list_t *list, int key);
 
 /**
-@brief Removes the list node with the given key from the list. 
+@brief Removes the list node with the given key from the list.
 */
 void remove_node(list_t *list, int key);
 
@@ -119,6 +120,16 @@ void remove_node(list_t *list, int key);
 // Accessed on April 11, 2019
 //
 
+
+#if (_MSC_VER <= 1600)
+
+list_node_t *first_list(list_t *list);
+
+bool done_list(list_node_t *lnode);
+
+list_node_t *next_list(list_node_t *lnode);
+
+#else
 /**
 @brief Returns list head node.
 */
@@ -133,7 +144,7 @@ static inline bool done_list(list_node_t *lnode) { return lnode != NULL; }
 @brief Returns next node in the list.
 */
 static inline list_node_t *next_list(list_node_t *lnode) { return get_next(lnode); }
-
+#endif
 
 #if defined(__cplusplus)
 }

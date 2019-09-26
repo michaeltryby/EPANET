@@ -18,6 +18,7 @@ include_directories (${Boost_INCLUDE_DIRS})
 add_subdirectory(outfile)
 add_subdirectory(shared)
 add_subdirectory(solver)
+add_subdirectory(toolkit)
 
 
 # TODO: Bad practice should set specific target compile features instead
@@ -62,23 +63,18 @@ set_target_properties(test_net_builder test_reent
 # Setting up tests to run from build tree
 set(TEST_BIN_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIGURATION>")
 
-add_test(NAME test_toolkit
-    COMMAND "${TEST_BIN_DIRECTORY}/test_toolkit"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/solver/data
+
+###############################################################################
+###                  REGISTER NEW TESTS WITH CTEST HERE                     ###
+###############################################################################
+
+# output
+add_test(NAME test_output
+    COMMAND "${TEST_BIN_DIRECTORY}/test_output"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outfile/data
     )
 
-add_test(NAME test_net_builder
-    COMMAND "${TEST_BIN_DIRECTORY}/test_net_builder"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
-    )
-
-add_test(NAME test_reent
-    COMMAND "${TEST_BIN_DIRECTORY}/test_reent"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
-    )
-
-
-# ctest doesn't like tests added in subdirectories so adding them here
+# shared
 add_test(NAME test_cstrhelper
     COMMAND "${TEST_BIN_DIRECTORY}/test_cstrhelper"
     )
@@ -92,7 +88,27 @@ add_test(NAME test_filemanager
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outfile/data
     )
 
-add_test(NAME test_output
-    COMMAND "${TEST_BIN_DIRECTORY}/test_output"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outfile/data
+
+# solver
+add_test(NAME test_list
+    COMMAND "${TEST_BIN_DIRECTORY}/test_list"
+    )
+
+
+# toolkit
+add_test(NAME test_toolkit
+    COMMAND "${TEST_BIN_DIRECTORY}/test_toolkit"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/toolkit/data
+    )
+
+
+# tests
+add_test(NAME test_net_builder
+    COMMAND "${TEST_BIN_DIRECTORY}/test_net_builder"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
+    )
+
+add_test(NAME test_reent
+    COMMAND "${TEST_BIN_DIRECTORY}/test_reent"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data
     )

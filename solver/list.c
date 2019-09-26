@@ -22,7 +22,6 @@
 #endif
 
 #include <string.h>
-#include <time.h>
 #include <assert.h>
 
 #include "list.h"
@@ -62,14 +61,14 @@ list_t *create_list(size_t elementSize, freeFunction freeFn)
 
 void delete_list(list_t *list)
 {
-    list_node_t *current;
-
-    while(list->head != NULL) {
-        current = list->head;
-        list->head = current->next;
-        delete_node(list, current);
+    if (list) {
+        while(list->head != NULL) {
+            list_node_t *current = list->head;
+            list->head = current->next;
+            delete_node(list, current);
+        }
+        free(list);
     }
-    free(list);
 }
 
 int prepend_list(list_t *list, void *element)
@@ -117,8 +116,9 @@ int append_list(list_t *list, void *element)
 
 
 void for_each_list(list_t *list, listIterator iterator)
+// TODO: Figure out how to pass arguments in with an iterator.
 {
-    assert(iterator != NULL);
+    //assert(iterator != NULL);
 
     list_node_t *node = list->head;
     bool result = true;
@@ -148,18 +148,6 @@ list_node_t *tail_list(list_t *list)
 {
     assert(list->tail != NULL);
     return list->tail;
-}
-
-list_node_t *get_nth_list(list_t *list, int index)
-{
-    int n;
-    list_node_t *lnode;
-
-    for (n = 1, lnode = first_list(list); n < index && done_list(lnode); n++, lnode = next_list(lnode));
-    if (n != index)
-        return NULL;
-    else
-        return lnode;
 }
 
 list_node_t *search_list(list_t *list, int key)
@@ -193,9 +181,10 @@ void remove_node(list_t *list, int key)
         }
         // detatch tail
         temp->next = NULL;
+        list->logicalLength--;
         delete_node(list, list->tail);
     }
-    else {
+    else if (target) {
         temp = target->next;
         list->freeFn(target->data);
         free(target->data);
@@ -203,13 +192,17 @@ void remove_node(list_t *list, int key)
         target->data = temp->data;
         target->next = temp->next;
 
+        list->logicalLength--;
         free(temp);
     }
 }
 
 int size_list(list_t *list)
 {
-    return list->logicalLength;
+    if (list)
+        return list->logicalLength;
+    else
+        return 0;
 }
 
 int get_key(list_node_t *lnode)
@@ -224,7 +217,10 @@ void *get_data(list_node_t *lnode)
 
 list_node_t *get_next(list_node_t *lnode)
 {
-	return lnode->next;
+    if (lnode)
+        return lnode->next;
+    else
+        return NULL;
 }
 
 void delete_node(list_t *list, list_node_t *lnode)
@@ -237,10 +233,19 @@ void delete_node(list_t *list, list_node_t *lnode)
 }
 
 
+#if (_MSC_VER <= 1600)
+list_node_t *first_list(list_t *list) { return head_list(list, false); }
+
+bool done_list(list_node_t *lnode) { return lnode != NULL; }
+
+list_node_t *next_list(list_node_t *lnode) { return get_next(lnode); }
+#endif
+
+
 // local functions
 
 int gen_key()
-// Naive key generator. No guarentee of uniqueness
+// Naive key generator. No guarantee of uniqueness
 {
     return rand();
 }
