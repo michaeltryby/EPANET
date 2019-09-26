@@ -139,7 +139,7 @@ int tankdata(Project *pr)
            n,               // # data items
            pattern = 0,     // Time pattern index
            curve = 0,       // Curve index
-           overflow = FALSE;// Overflow indicator    
+           overflow = FALSE;// Overflow indicator
     double el = 0.0,        // Elevation
            initlevel = 0.0, // Initial level
            minlevel = 0.0,  // Minimum level
@@ -1257,29 +1257,38 @@ int statusdata(Project *pr)
     double y = 0.0;
     char status = ACTIVE;
 
-    if (net->Nlinks == 0) return setError(parser, 0, 204);
+    if (net->Nlinks == 0)
+        return setError(parser, 0, 204);
+
     n = parser->Ntokens - 1;
-    if (n < 1) return 201;
+    if (n < 1)
+        return 201;
 
     // Check for legal status setting
     if (match(parser->Tok[n], w_OPEN))  status = OPEN;
     else if (match(parser->Tok[n], w_CLOSED)) status = CLOSED;
     else
     {
-        if (!getfloat(parser->Tok[n], &y)) return setError(parser, n, 202);
-        if (y < 0.0) return setError(parser, n, 211);
+        if (!getfloat(parser->Tok[n], &y))
+            return setError(parser, n, 202);
+        if (y < 0.0)
+            return setError(parser, n, 211);
     }
 
     // A single link ID was supplied
     if (n == 1)
     {
-        if ((j = findlink(net, parser->Tok[0])) == 0) return setError(parser, 0, 204);
+        if ((j = findlink(net, parser->Tok[0])) == 0)
+            return setError(parser, 0, 204);
 
         // Cannot change status of a Check Valve
-        if (net->Link[j].Type == CVPIPE) return setError(parser, 0, 207);
+        if (net->Link[j].Type == CVPIPE)
+            return setError(parser, 0, 207);
 
         // Cannot change setting for a GPV
-        if (net->Link[j].Type == GPV && status == ACTIVE) return setError(parser, 0, 207);
+        if (net->Link[j].Type == GPV && status == ACTIVE)
+            return setError(parser, 0, 207);
+
         changestatus(net, j, status, y);
     }
 
@@ -1290,7 +1299,8 @@ int statusdata(Project *pr)
         for (j = 1; j <= net->Nlinks; j++)
         {
             i = atol(net->Link[j].ID);
-            if (i >= i1 && i <= i2) changestatus(net, j, status, y);
+            if (i >= i1 && i <= i2)
+                changestatus(net, j, status, y);
         }
     }
 
