@@ -229,7 +229,7 @@ nrtests/
 tests/data/
 tests/outfile/data/
 tests/solver/data/
-
+tests/toolkit/data/
 
 #Cmake stuff
 __cmake_systeminformation/
