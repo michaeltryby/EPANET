@@ -21,6 +21,8 @@ Last Updated: 05/15/2019
 #include "hash.h"
 #include "text.h"
 
+#include "demand.h"
+
 // Defined in enumstxt.h in EPANET.C
 extern char *LinkTxt[];
 extern char *FormTxt[];
@@ -112,6 +114,41 @@ void saveauxdata(Project *pr, FILE *f)
     InFile = NULL;
 }
 
+void write_demands(Project *pr, FILE *f) {
+	int i, j;
+
+	Snode *node = NULL;
+	list_node_t *lnode = NULL;
+	char *temp = NULL;
+
+	char  s[MAXLINE + 1],
+		s1[MAXLINE + 1];
+
+	double ucf = pr->Ucf[DEMAND];
+	Network *net = &pr->network;
+
+	fprintf(f, "\n\n");
+	fprintf(f, s_DEMANDS);
+
+	for (i = 1; i <= net->Njuncs; i++) {
+		node = &net->Node[i];
+		for (lnode = first_list(node->D); done_list(lnode); lnode = next_list(lnode)) {
+			sprintf(s, " %-31s %14.6f", node->ID, ucf * get_base_demand(lnode));
+			if
+				((j = get_pattern_index(lnode)) > 0) sprintf(s1, " %-31s", net->Pattern[j].ID);
+			else
+				strcpy(s1, " ");
+
+			fprintf(f, "\n%s %-31s", s, s1);
+
+			if (temp = get_category_name(lnode)) {
+			    fprintf(f, " ;%s", temp);
+				free(temp);
+			}
+		}
+	}
+}
+
 int saveinpfile(Project *pr, const char *fname)
 /*
 -------------------------------------------------
@@ -128,9 +165,8 @@ int saveinpfile(Project *pr, const char *fname)
     Times   *time = &pr->times;
 
     int i, j, n;
-    double d, kc, ke, km, ucf;
+    double d, kc, ke, km;
     char s[MAXLINE + 1], s1[MAXLINE + 1], s2[MAXLINE + 1];
-    Pdemand demand;
     Psource source;
     FILE *f;
     Slink *link;
@@ -321,22 +357,8 @@ int saveinpfile(Project *pr, const char *fname)
     }
 
 
-    // Write [DEMANDS] section
-    fprintf(f, "\n\n");
-    fprintf(f, s_DEMANDS);
-    ucf = pr->Ucf[DEMAND];
-    for (i = 1; i <= net->Njuncs; i++)
-    {
-        node = &net->Node[i];
-        for (demand = node->D; demand != NULL; demand = demand->next)
-        {
-            sprintf(s, " %-31s %14.6f", node->ID, ucf * demand->Base);
-            if ((j = demand->Pat) > 0) sprintf(s1, " %-31s", net->Pattern[j].ID);
-            else strcpy(s1, " ");
-            fprintf(f, "\n%s %-31s", s, s1);
-            if (demand->Name) fprintf(f, " ;%s", demand->Name);
-        }
-    }
+	// Write [DEMANDS] section
+	write_demands(pr, f);
 
 
     // Write [EMITTERS] section

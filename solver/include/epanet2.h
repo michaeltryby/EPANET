@@ -230,28 +230,28 @@ extern "C" {
   int DLLEXPORT ENsetdemandmodel(int model, EN_API_FLOAT_TYPE pmin,
                 EN_API_FLOAT_TYPE preq, EN_API_FLOAT_TYPE pexp);
 
-  int DLLEXPORT ENadddemand(int nodeIndex, EN_API_FLOAT_TYPE baseDemand,
-                char *demandPattern, char *demandName);
+  //int DLLEXPORT ENadddemand(int nodeIndex, EN_API_FLOAT_TYPE baseDemand,
+  //              char *demandPattern, char *demandName);
 
-  int DLLEXPORT ENdeletedemand(int nodeIndex, int demandIndex);
-  
-  int DLLEXPORT ENgetnumdemands(int nodeIndex, int *numDemands);
+  //int DLLEXPORT ENdeletedemand(int nodeIndex, int demandIndex);
+  //
+  //int DLLEXPORT ENgetnumdemands(int nodeIndex, int *numDemands);
 
-  int DLLEXPORT ENgetdemandindex(int nodeIndex, char *demandName, int *demandIndex);
+  //int DLLEXPORT ENgetdemandindex(int nodeIndex, char *demandName, int *demandIndex);
 
-  int DLLEXPORT ENgetbasedemand(int nodeIndex, int demandIndex,
-                EN_API_FLOAT_TYPE *baseDemand);
+  //int DLLEXPORT ENgetbasedemand(int nodeIndex, int demandIndex,
+  //              EN_API_FLOAT_TYPE *baseDemand);
 
-  int DLLEXPORT ENsetbasedemand(int nodeIndex, int demandIndex,
-                EN_API_FLOAT_TYPE baseDemand);
+  //int DLLEXPORT ENsetbasedemand(int nodeIndex, int demandIndex,
+  //              EN_API_FLOAT_TYPE baseDemand);
 
-  int DLLEXPORT ENgetdemandpattern(int nodeIndex, int demandIndex, int *patIndex);
+  //int DLLEXPORT ENgetdemandpattern(int nodeIndex, int demandIndex, int *patIndex);
 
-  int DLLEXPORT ENsetdemandpattern(int nodeIndex, int demandIndex, int patIndex);
+  //int DLLEXPORT ENsetdemandpattern(int nodeIndex, int demandIndex, int patIndex);
 
-  int DLLEXPORT ENgetdemandname(int nodeIndex, int demandIndex, char *demandName);
+  //int DLLEXPORT ENgetdemandname(int nodeIndex, int demandIndex, char *demandName);
 
-  int DLLEXPORT ENsetdemandname(int nodeIndex, int demandIndex, char *demandName);
+  //int DLLEXPORT ENsetdemandname(int nodeIndex, int demandIndex, char *demandName);
 
 /********************************************************************
 

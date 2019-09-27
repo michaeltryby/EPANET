@@ -23,6 +23,8 @@
 #include "types.h"
 #include "funcs.h"
 
+#include "demand.h"
+
 
 int openfiles(Project *pr, const char *f1, const char *f2, const char *f3)
 /*----------------------------------------------------------------
@@ -398,7 +400,7 @@ void freedata(Project *pr)
         for (j = 1; j <= pr->parser.MaxNodes; j++)
         {
             // Free memory used for demands and WQ source data
-            freedemands(&(pr->network.Node[j]));
+            delete_list(pr->network.Node[j].D);
             free(pr->network.Node[j].S);
             free(pr->network.Node[j].Comment);
         }
@@ -480,62 +482,62 @@ Pdemand finddemand(Pdemand d, int index)
     return d;
 }
 
-int adddemand(Snode *node, double dbase, int dpat, char *dname)
-/*----------------------------------------------------------------
-**  Input:   node = a network junction node
-**           dbase = base demand value
-**           dpat = demand pattern index
-**           dname = name of demand category
-**  Output:  returns TRUE if successful, FALSE if not
-**  Purpose: adds a new demand category to a node.
-**----------------------------------------------------------------
-*/
-{
-    Pdemand demand, lastdemand;
-
-    // Create a new demand struct
-    demand = (struct Sdemand *)malloc(sizeof(struct Sdemand));
-    if (demand == NULL) return FALSE;
-
-    // Assign it the designated properties
-    demand->Base = dbase;
-    demand->Pat = dpat;
-    demand->Name = NULL;
-    if (dname && strlen(dname) > 0) xstrcpy(&demand->Name, dname, MAXID);
-    demand->next = NULL;
-
-    // If node has no demands make this its first demand category
-    if (node->D == NULL) node->D = demand;
-
-    // Otherwise append this demand to the end of the node's demands list
-    else
-    {
-        lastdemand = node->D;
-        while (lastdemand->next) lastdemand = lastdemand->next;
-        lastdemand->next = demand;
-    }
-    return TRUE;
-}
-
-void freedemands(Snode *node)
-/*----------------------------------------------------------------
-**  Input:   node = a network junction node
-**  Output:  node
-**  Purpose: frees the memory used for a node's list of demands.
-**----------------------------------------------------------------
-*/
-{
-    Pdemand nextdemand;
-    Pdemand demand = node->D;
-    while (demand != NULL)
-    {
-        nextdemand = demand->next;
-        free(demand->Name);
-        free(demand);
-        demand = nextdemand;
-    }
-    node->D = NULL;
-}
+//int adddemand(Snode *node, double dbase, int dpat, char *dname)
+///*----------------------------------------------------------------
+//**  Input:   node = a network junction node
+//**           dbase = base demand value
+//**           dpat = demand pattern index
+//**           dname = name of demand category
+//**  Output:  returns TRUE if successful, FALSE if not
+//**  Purpose: adds a new demand category to a node.
+//**----------------------------------------------------------------
+//*/
+//{
+//    Pdemand demand, lastdemand;
+//
+//    // Create a new demand struct
+//    demand = (struct Sdemand *)malloc(sizeof(struct Sdemand));
+//    if (demand == NULL) return FALSE;
+//
+//    // Assign it the designated properties
+//    demand->Base = dbase;
+//    demand->Pat = dpat;
+//    demand->Name = NULL;
+//    if (dname && strlen(dname) > 0) xstrcpy(&demand->Name, dname, MAXID);
+//    demand->next = NULL;
+//
+//    // If node has no demands make this its first demand category
+//    if (node->D == NULL) node->D = demand;
+//
+//    // Otherwise append this demand to the end of the node's demands list
+//    else
+//    {
+//        lastdemand = node->D;
+//        while (lastdemand->next) lastdemand = lastdemand->next;
+//        lastdemand->next = demand;
+//    }
+//    return TRUE;
+//}
+//
+//void freedemands(Snode *node)
+///*----------------------------------------------------------------
+//**  Input:   node = a network junction node
+//**  Output:  node
+//**  Purpose: frees the memory used for a node's list of demands.
+//**----------------------------------------------------------------
+//*/
+//{
+//    Pdemand nextdemand;
+//    Pdemand demand = node->D;
+//    while (demand != NULL)
+//    {
+//        nextdemand = demand->next;
+//        free(demand->Name);
+//        free(demand);
+//        demand = nextdemand;
+//    }
+//    node->D = NULL;
+//}
 
 int  buildadjlists(Network *net)
 /*
@@ -857,6 +859,18 @@ void adjustpattern(int *pat, int index)
 	else if (*pat > index) (*pat)--;
 }
 
+void adjust_demand_pattern(list_node_t *list_node, int deletion_index)
+/*----------------------------------------------------------------
+** Local function that modifies a reference to a deleted demand pattern
+**----------------------------------------------------------------
+*/
+{
+	int pat_idx = get_pattern_index(list_node);
+
+	if (pat_idx == deletion_index) set_pattern_index(list_node, 0);
+	else if (pat_idx > deletion_index) set_pattern_index(list_node, --pat_idx);
+}
+
 void adjustpatterns(Network *network, int index)
 /*----------------------------------------------------------------
 **  Input:   index = index of time pattern being deleted
@@ -866,17 +880,17 @@ void adjustpatterns(Network *network, int index)
 */
 {
     int j;
-    Pdemand demand;
+
     Psource source;
+	list_node_t *lnode;
 
     // Adjust patterns used by junctions
     for (j = 1; j <= network->Nnodes; j++)
     {
-        // Adjust demand patterns
-        for (demand = network->Node[j].D; demand != NULL; demand = demand->next)
-        {
-            adjustpattern(&demand->Pat, index);
-        }
+		// Adjust demand patterns
+		for (lnode = first_list(network->Node[j].D); done_list(lnode); lnode = next_list(lnode))
+			adjust_demand_pattern(lnode, index);
+
         // Adjust WQ source patterns
         source = network->Node[j].S;
         if (source) adjustpattern(&source->Pat, index);

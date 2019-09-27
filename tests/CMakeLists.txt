@@ -74,6 +74,7 @@ add_test(NAME test_output
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outfile/data
     )
 
+
 # shared
 add_test(NAME test_cstrhelper
     COMMAND "${TEST_BIN_DIRECTORY}/test_cstrhelper"
@@ -90,6 +91,10 @@ add_test(NAME test_filemanager
 
 
 # solver
+add_test(NAME test_demand_data
+    COMMAND "${TEST_BIN_DIRECTORY}/test_demand_data"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/solver/data
+    )
 add_test(NAME test_list
     COMMAND "${TEST_BIN_DIRECTORY}/test_list"
     )

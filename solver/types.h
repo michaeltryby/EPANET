@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #include "hash.h"
+#include "list.h"
 
 /*
 -------------------------------------------
@@ -372,7 +373,7 @@ typedef struct             // Node Object
   double   X;              // x-coordinate
   double   Y;              // y-coordinate
   double   El;             // elevation
-  Pdemand  D;              // demand pointer
+  list_t   *D;             // demand list pointer
   Psource  S;              // source pointer
   double   C0;             // initial quality
   double   Ke;             // emitter coeff.

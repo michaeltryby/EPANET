@@ -207,7 +207,10 @@ int size_list(list_t *list)
 
 int get_key(list_node_t *lnode)
 {
-    return lnode->key;
+	if (lnode)
+		return lnode->key;
+	else
+		return -1;
 }
 
 void *get_data(list_node_t *lnode)
