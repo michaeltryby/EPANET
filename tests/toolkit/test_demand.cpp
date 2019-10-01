@@ -18,6 +18,45 @@
 
 BOOST_AUTO_TEST_SUITE (test_demand)
 
+BOOST_FIXTURE_TEST_CASE(test_add_delete_demand, FixtureSingleNode)
+{
+	int Dindex, nD1, nD2;
+
+	error = EN_adddemand(ph, node_qhut, 100.0, "PrimaryPattern", "PrimaryDemand");
+	BOOST_CHECK(error != 0);
+
+	error = EN_addpattern(ph, (char *)"PrimaryPattern");
+	BOOST_REQUIRE(error == 0);
+
+	error = EN_adddemand(ph, node_qhut, 100.0, "PrimaryPattern", "PrimaryDemand");
+	BOOST_CHECK(error == 0);
+
+	error = EN_addpattern(ph, (char *)"SecondaryPattern");
+	BOOST_REQUIRE(error == 0);
+
+	error = EN_adddemand(ph, node_qhut, 10.0, "SecondaryPattern", "SecondaryDemand");
+	BOOST_CHECK(error == 0);
+
+	error = EN_addpattern(ph, (char *)"TertiaryPattern");
+	BOOST_REQUIRE(error == 0);
+
+	error = EN_adddemand(ph, node_qhut, 1.0, "TertiaryPattern", "TertiaryDemand");
+	BOOST_CHECK(error == 0);
+
+	error = EN_getnumdemands(ph, node_qhut, &nD1);
+	BOOST_REQUIRE(error == 0);
+
+	error = EN_getdemandindex(ph, node_qhut, "TertiaryDemand", &Dindex);
+	BOOST_CHECK(error == 0);
+	BOOST_CHECK(Dindex == nD1);
+
+	error = EN_deletedemand(ph, node_qhut, Dindex);
+	BOOST_CHECK(error == 0);
+
+	error = EN_getnumdemands(ph, node_qhut, &nD2);
+	BOOST_REQUIRE(error == 0);
+	BOOST_CHECK(nD1 - nD2 == 1);
+}
 
 BOOST_AUTO_TEST_CASE(test_categories_save)
 {
@@ -82,45 +121,40 @@ BOOST_AUTO_TEST_CASE(test_categories_reopen, * boost::unit_test::depends_on("tes
     BOOST_REQUIRE(error == 0);
 }
 
-BOOST_FIXTURE_TEST_CASE(test_adddemand, FixtureSingleNode)
+
+
+BOOST_FIXTURE_TEST_CASE(test_setdemandpattern, FixtureOpenClose)
 {
-    int Dindex, nD1, nD2;
+    int i, j, pat_index, pat_index_2, numDemands, nnodes;
+    char newpat[] = "new_pattern";
 
-    error = EN_adddemand(ph, node_qhut, 100.0, "PrimaryPattern", "PrimaryDemand");
-    BOOST_CHECK(error != 0);
-
-    error = EN_addpattern(ph, (char *)"PrimaryPattern");
+    // get the number of nodes
+    error = EN_getcount(ph, EN_NODECOUNT, &nnodes);
     BOOST_REQUIRE(error == 0);
 
-    error = EN_adddemand(ph, node_qhut, 100.0, "PrimaryPattern", "PrimaryDemand");
-    BOOST_CHECK(error == 0);
-
-    error = EN_addpattern(ph, (char *)"SecondaryPattern");
+    // add a new pattern
+    error = EN_addpattern(ph, newpat);
     BOOST_REQUIRE(error == 0);
 
-    error = EN_adddemand(ph, node_qhut, 10.0, "SecondaryPattern", "SecondaryDemand");
-    BOOST_CHECK(error == 0);
-
-    error = EN_addpattern(ph, (char *)"TertiaryPattern");
+    // get the new patterns index, should be as the number of patterns
+    error = EN_getpatternindex(ph, newpat, &pat_index);
     BOOST_REQUIRE(error == 0);
 
-    error = EN_adddemand(ph, node_qhut, 1.0, "TertiaryPattern", "TertiaryDemand");
-    BOOST_CHECK(error == 0);
+    for (i = 1; i <= nnodes; i++) {
+        // get the number of demand categories
+        error = EN_getnumdemands(ph, i, &numDemands);
+        BOOST_REQUIRE(error == 0);
 
-    error = EN_getnumdemands(ph, node_qhut, &nD1);
-    BOOST_REQUIRE(error == 0);
-
-    error = EN_getdemandindex(ph, node_qhut, "TertiaryDemand", &Dindex);
-    BOOST_CHECK(error == 0);
-    BOOST_CHECK(Dindex == nD1);
-
-    error = EN_deletedemand(ph, node_qhut, Dindex);
-    BOOST_CHECK(error == 0);
-
-    error = EN_getnumdemands(ph, node_qhut, &nD2);
-    BOOST_REQUIRE(error == 0);
-    BOOST_CHECK(nD1 - nD2 == 1);
+        for (j = 1; j <= numDemands; j++) {
+            // set demand patterns
+            error = EN_setdemandpattern(ph, i, j, pat_index);
+            BOOST_REQUIRE(error == 0);
+            // get demand patterns should be the same with set
+            error = EN_getdemandpattern(ph, i, j, &pat_index_2);
+            BOOST_REQUIRE(error == 0);
+            BOOST_CHECK(pat_index == pat_index_2);
+        }
+    }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -38,12 +38,10 @@ BOOST_AUTO_TEST_SUITE(test_demand_data)
 
 BOOST_AUTO_TEST_CASE(test_create_destroy_demand_list)
 {
-    int key;
     list_t *dlist;
 
-    dlist = create_demand_list(100.0, 1, "CUB_SCOUT_DAY_CAMP", &key);
+    dlist = create_demand_list(100.0, 1, "CUB_SCOUT_DAY_CAMP");
     BOOST_CHECK(dlist != NULL);
-    BOOST_CHECK(key != NULL);
 
     delete_list(dlist);
 }
@@ -181,7 +179,7 @@ struct FixtureSingleNode {
         EN_init(ph, DATA_PATH_RPT, DATA_PATH_OUT, EN_GPM, EN_HW);
 
         EN_addnode(ph, (char *)"CUB_SCOUT_QUONSET_HUT", EN_JUNCTION, &node_qhut);
-        //EN_getnodeindex(ph, (char *)"CUB_SCOUT_QUONSET_HUT", &node_qhut);
+        EN_getnodeindex(ph, (char *)"CUB_SCOUT_QUONSET_HUT", &node_qhut);
     }
 
     ~FixtureSingleNode() {

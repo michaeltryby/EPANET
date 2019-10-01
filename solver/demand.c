@@ -33,10 +33,8 @@ typedef struct demand_data_s
 
 
 
-list_t *create_demand_list(double base_demand, int pattern_index, const char *category_name, int *key)
+list_t *create_demand_list(double base_demand, int pattern_index, const char *category_name)
 {
-    int temp;
-
 	list_t *demand_list;
 	demand_data_t *demand_data;
 
@@ -46,10 +44,7 @@ list_t *create_demand_list(double base_demand, int pattern_index, const char *ca
 	demand_data = create_demand_data(base_demand, pattern_index, category_name);
 	if (!demand_data) return NULL;
 
-	temp = append_list(demand_list, &demand_data);
-
-    if (key)
-        *key = temp;
+	append_list(demand_list, &demand_data);
 
 	return demand_list;
 }
