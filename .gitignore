@@ -137,6 +137,10 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+# Doxygen
+doc/html/
+
+
 # Click-Once directory
 publish/
 
@@ -221,14 +225,15 @@ temp/
 .pydevproject
 
 # Testing Stuff
-nrtestsuite/
+nrtests/
 tests/data/
-tests/outfile/data/en*
-
+tests/outfile/data/
+tests/solver/data/
+tests/toolkit/data/
 
 #Cmake stuff
 __cmake_systeminformation/
-buildprod*/
+build/
 *_export.h
 
 
