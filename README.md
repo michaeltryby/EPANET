@@ -1,12 +1,6 @@
 Water-Distribution-Network-Model
 ================================
 
-## Build Status
-[![Build status](https://ci.appveyor.com/api/projects/status/i3oj446rm6fnq6ki?svg=true)](https://ci.appveyor.com/project/michaeltryby/epanet/branch/dev)
-[![Build Status](https://travis-ci.org/michaeltryby/EPANET.svg?branch=dev)](https://travis-ci.org/michaeltryby/EPANET)
-
-
-[![codecov](https://codecov.io/gh/michaeltryby/EPANET/branch/dev/graph/badge.svg)](https://codecov.io/gh/michaeltryby/EPANET)
 
 EPANET was developed as a tool for understanding the movement and fate of drinking water constituents within distribution systems, and can be used for many different kinds of applications in distribution systems analysis. Today, engineers and consultants use EPANET to design and size new water infrastructure, retrofit existing aging infrastructure, optimize operations of tanks and pumps, reduce energy usage, investigate water quality problems, and prepare for emergencies. EPANET can also be used to model contamination threats and evaluate resilience to security threats or natural disasters.
 
