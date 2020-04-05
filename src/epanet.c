@@ -1591,6 +1591,11 @@ int DLLEXPORT EN_settimeparam(EN_Project p, int param, long value)
         time->Qtime = value;
         break;
 
+    case EN_STARTTIME:
+        if (value < 0 || value > SECperDAY) return 213;
+	    time->Tstart = value;
+        break;
+
     default:
         return 251;
     }
@@ -3631,7 +3636,8 @@ int DLLEXPORT EN_getlinkvalue(EN_Project p, int index, int property, double *val
         {
             return EN_getlinkvalue(p, index, EN_ROUGHNESS, value);
         }
-        v = Link[index].Kc;
+		if (Link[index].Kc == MISSING) v = 0.0;
+        else v = Link[index].Kc;
         switch (Link[index].Type)
         {
         case PRV:
