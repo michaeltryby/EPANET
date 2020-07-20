@@ -4,7 +4,7 @@
 'Declarations of functions in the EPANET PROGRAMMERs TOOLKIT
 '(EPANET2.DLL) for use with VB.Net.
 
-'Last updated on 11/04/2019
+'Last updated on 02/01/2020
 
 Imports System.Runtime.InteropServices
 Imports System.Text
@@ -29,7 +29,6 @@ Public Const EN_SOURCEMASS = 13
 Public Const EN_INITVOLUME = 14
 Public Const EN_MIXMODEL = 15
 Public Const EN_MIXZONEVOL = 16
-
 Public Const EN_TANKDIAM = 17
 Public Const EN_MINVOLUME = 18
 Public Const EN_VOLCURVE = 19
@@ -37,11 +36,11 @@ Public Const EN_MINLEVEL = 20
 Public Const EN_MAXLEVEL = 21
 Public Const EN_MIXFRACTION = 22
 Public Const EN_TANK_KBULK = 23
-
 Public Const EN_TANKVOLUME = 24
 Public Const EN_MAXVOLUME = 25
 Public Const EN_CANOVERFLOW = 26
-Public Const EN_DEMANDDEFICIT = 27 
+Public Const EN_DEMANDDEFICIT = 27
+Public Const EN_NODE_INCONTROL = 28
 
 Public Const EN_DIAMETER = 0      ' Link parameters
 Public Const EN_LENGTH = 1
@@ -59,7 +58,6 @@ Public Const EN_SETTING = 12
 Public Const EN_ENERGY = 13
 Public Const EN_LINKQUAL = 14
 Public Const EN_LINKPATTERN = 15
-
 Public Const EN_PUMP_STATE = 16
 Public Const EN_PUMP_EFFIC = 17
 Public Const EN_PUMP_POWER = 18
@@ -67,6 +65,8 @@ Public Const EN_PUMP_HCURVE = 19
 Public Const EN_PUMP_ECURVE = 20
 Public Const EN_PUMP_ECOST = 21
 Public Const EN_PUMP_EPAT = 22
+Public Const EN_LINK_INCONTROL = 23
+Public Const EN_GPV_CURVE = 24
 
 Public Const EN_DURATION = 0      ' Time parameters
 Public Const EN_HYDSTEP = 1
@@ -345,6 +345,7 @@ Public Const EN_MISSING As Double = -1.0E10
  Declare Function ENsetpipedata Lib "epanet2.dll" (ByVal index As Int32, ByVal length As Single, ByVal diam As Single, ByVal rough As Single, ByVal mloss As Single) As Int32
  Declare Function ENgetvertexcount Lib "epanet2.dll" (ByVal index As Int32, count As Int32) As Int32
  Declare Function ENgetvertex Lib "epanet2.dll" (ByVal index As Int32, ByVal vertex As Int32, x As Double, y As Double) As Int32
+ Declare Function ENsetvertex Lib "epanet2.dll" (ByVal index As Int32, ByVal vertex As Int32, ByVal x As Double, ByVal y As Double) As Int32
  Declare Function ENsetvertices Lib "epanet2.dll" (ByVal index As Int32, xCoords As Any, yCoords As Any, ByVal count As Int32) As Int32
 
 'Pump Functions
@@ -372,6 +373,7 @@ Public Const EN_MISSING As Double = -1.0E10
  Declare Function ENsetcurveid Lib "epanet2.dll" (ByVal index As Int32, ByVal newid As String) As Int32
  Declare Function ENgetcurvelen Lib "epanet2.dll" (ByVal index As Int32, len_ As Int32) As Int32
  Declare Function ENgetcurvetype Lib "epanet2.dll" (ByVal index As Int32, type_ As Int32) As Int32
+ Declare Function ENsetcurvetype Lib "epanet2.dll" (ByVal index As Int32, ByVal type_ As Int32) As Int32 
  Declare Function ENgetcurvevalue Lib "epanet2.dll" (ByVal curveIndex As Int32, ByVal pointIndex As Int32, x As Single, y As Single) As Int32
  Declare Function ENsetcurvevalue Lib "epanet2.dll" (ByVal curveIndex As Int32, ByVal pointIndex As Int32, ByVal x As Single, ByVal y As Single) As Int32
  Declare Function ENgetcurve Lib "epanet2.dll" (ByVal index As Int32, ByVal id As String, nPoints As Int32, xValues As Any, yValues As Any) As Int32
