@@ -7,7 +7,7 @@
  Authors:      see AUTHORS
  Copyright:    see AUTHORS
  License:      see LICENSE
- Last Updated: 02/01/2020
+ Last Updated: 11/08/2020
  ******************************************************************************
 */
 
@@ -1592,7 +1592,7 @@ int DLLEXPORT EN_settimeparam(EN_Project p, int param, long value)
         break;
 
     case EN_STARTTIME:
-        if (value < 0 || value > SECperDAY) return 213;
+        if (value > SECperDAY) return 213;
 	    time->Tstart = value;
         break;
 
@@ -2411,7 +2411,7 @@ int DLLEXPORT EN_setnodevalue(EN_Project p, int index, int property, double valu
 
             // Since the volume curve no longer applies we assume that the tank's
             // shape below Hmin is cylindrical and Vmin equals area times Hmin
-            Tank[j].Vmin = Tank[j].A * Tank[j].Hmin;
+            Tank[j].Vmin = Tank[j].A * (Tank[j].Hmin - Node[index].El);
         }
         // Since tank's area has changed its volumes must be updated
         // NOTE: For a non-volume curve tank we can't change the Vmin
@@ -2444,7 +2444,7 @@ int DLLEXPORT EN_setnodevalue(EN_Project p, int index, int property, double valu
             // If the volume supplied by the function is 0 then the tank shape
             // below Hmin is assumed to be cylindrical and a new Vmin value is
             // computed. Otherwise Vmin is set to the supplied value.
-            if (value == 0.0) Tank[j].Vmin = Tank[j].A * Tank[j].Hmin;
+            if (value == 0.0) Tank[j].Vmin = Tank[j].A * (Tank[j].Hmin - Node[index].El);
             else Tank[j].Vmin = value / Ucf[VOLUME];
 
             // Since Vmin changes the other volumes need updating
@@ -2672,7 +2672,7 @@ int DLLEXPORT EN_settankdata(EN_Project p, int index, double elev,
     if (curveIndex == 0)
     {
         if (minvol > 0.0) Tank[j].Vmin = minvol / Ucf[VOLUME];
-        else Tank[j].Vmin = Tank[j].A * Tank[j].Hmin;
+        else Tank[j].Vmin = Tank[j].A * (Tank[j].Hmin - elev / Ucf[ELEV]);
     }
     else Tank[j].Vmin = tankvolume(p, j, Tank[j].Hmin);
     Tank[j].V0 = tankvolume(p, j, Tank[j].H0);
@@ -3886,7 +3886,6 @@ int DLLEXPORT EN_setlinkvalue(EN_Project p, int index, int property, double valu
 
     case EN_INITSETTING:
     case EN_SETTING:
-        if (value < 0.0) return 211;
         if (Link[index].Type == PIPE || Link[index].Type == CVPIPE)
         {
             return EN_setlinkvalue(p, index, EN_ROUGHNESS, value);
@@ -3896,6 +3895,7 @@ int DLLEXPORT EN_setlinkvalue(EN_Project p, int index, int property, double valu
             switch (Link[index].Type)
             {
             case PUMP:
+                if (value < 0.0) return 211;
                 break;
             case PRV:
             case PSV:
